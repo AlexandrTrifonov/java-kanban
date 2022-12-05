@@ -1,37 +1,17 @@
-import java.util.ArrayList;
 import java.util.HashMap;
 
+import tasks.Status;
+import tasks.Task;
+import tasks.Epic;
+import tasks.Subtask;
+
 public class Manager {
-    Integer id = 0;
-    Integer x = 0;
-    HashMap <Integer, Task> hmTask = new HashMap<>();
-    HashMap <Integer, Epic> hmEpic = new HashMap<>();
-    HashMap <Integer, Subtask> hmSubtask = new HashMap<>();
+    private Integer id = 0;
+//    Integer x = 0;
+    private final HashMap <Integer, Task> hmTask = new HashMap<>();
+    private final HashMap <Integer, Epic> hmEpic = new HashMap<>();
+    private final HashMap <Integer, Subtask> hmSubtask = new HashMap<>();
 
-
-
-    public void printTask() {
-        System.out.println("Список всех задач:");
-        for (Task tasks : hmTask.values()) {
-            System.out.println(tasks.name);
-            System.out.println(tasks.status);
-        }
-    }
-    public void printEpic() {
-        System.out.println("Список всех эпиков:");
-        for (Epic epics : hmEpic.values()) {
-            System.out.println(epics.name);
-            System.out.println(epics.status);
-        }
-    }
-    public void printSubtask() {
-        System.out.println("Список всех подзадач:");
-        for (Subtask subtask : hmSubtask.values()) {
-            System.out.println(subtask.name);
-            System.out.println(subtask.status);
-            System.out.println("id эпика: " + subtask.idEpic);
-        }
-    }
     public void deleteTasks() {
         hmTask.clear();
     }
@@ -47,11 +27,12 @@ public class Manager {
     public void printSubtaskOfEpic(Integer idEpic) {
         System.out.println("Список подзадач эпика с id =" + idEpic + ":");
         for (Integer z : hmEpic.get(idEpic).idSubtask) {
-            System.out.println(hmSubtask.get(z).name);
+            System.out.println(hmSubtask.get(z));
         }
     }
     public void getTaskId(Integer id) {
-        System.out.println("Номер" + id + " Название: " + hmTask.get(id).name + " Описание: " + hmTask.get(id).discription + " Статус: " + hmTask.get(id).status);
+        Task task = hmTask.get(id);
+        System.out.println(task);
     }
     public void createTask(Task task) {
         hmTask.put(id,task);
@@ -63,8 +44,8 @@ public class Manager {
     }
     public void createSubtask(Subtask subtask) {
         hmSubtask.put(id,subtask);
-        x = subtask.idEpic;
-        hmEpic.get(x).idSubtask.add(id);
+    //    x = subtask.idEpic;
+        hmEpic.get(subtask.getIdEpic()).idSubtask.add(id);
         this.id ++;
     }
     public void updateTask(Integer id, Task task) {
@@ -72,26 +53,45 @@ public class Manager {
     }
     public void updateSubtask(Integer id, Subtask subtask) {
         hmSubtask.put(id,subtask);
-        x = subtask.idEpic;
-        int size = hmEpic.get(x).idSubtask.size();
+    //    x = subtask.idEpic;
+        int size = hmEpic.get(subtask.getIdEpic()).idSubtask.size();
         int countnew = 0;
         int countdone = 0;
         for (int i=0; i<size; i++) {
-            Integer zz = hmEpic.get(x).idSubtask.get(i);
-            if (hmSubtask.get(zz).status.equals("new")){
+            Integer zz = hmEpic.get(subtask.getIdEpic()).idSubtask.get(i);
+            if (hmSubtask.get(zz).getStatus().equals(Status.NEW)){
                 countnew ++;
-            } else if (hmSubtask.get(zz).status.equals("done")){
+            } else if (hmSubtask.get(zz).getStatus().equals(Status.DONE)){
                 countdone ++;
             }
         }
-        Epic epic = hmEpic.get(x);
+        Epic epic = hmEpic.get(subtask.getIdEpic());
         if (size==countnew) {
-            epic.status = "new";
+            epic.setStatus(Status.NEW);
         } else if (size==countdone) {
-            epic.status = "done";
+            epic.setStatus(Status.DONE);
         } else {
-            epic.status = "in progress";
+            epic.setStatus(Status.IN_PROGRESS);
         }
-        hmEpic.put(x,epic);
+        hmEpic.put(subtask.getIdEpic(),epic);
     }
+
+    /*    public void printTask() {
+        System.out.println("Список всех задач:");
+        for (Task tasks : hmTask.values()) {
+            System.out.println(tasks);
+        }
+    }
+    public void printEpic() {
+        System.out.println("Список всех эпиков:");
+        for (Epic epics : hmEpic.values()) {
+            System.out.println(epics);
+        }
+    }
+    public void printSubtask() {
+        System.out.println("Список всех подзадач:");
+        for (Subtask subtasks : hmSubtask.values()) {
+            System.out.println(subtasks);
+        }
+    }*/
 }
