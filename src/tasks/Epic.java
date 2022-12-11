@@ -22,7 +22,12 @@ public class Epic extends Task {
     @Override
     public String toString() {
         return "Epic{" + super.toString() +
-                "idSubtask=" + idSubtask +
                 "} ";
     }
+/*    @Override
+    public String toString() {
+        return "Epic{" + super.toString() +
+                "idSubtask=" + idSubtask +
+                "} ";
+    }*/
 }

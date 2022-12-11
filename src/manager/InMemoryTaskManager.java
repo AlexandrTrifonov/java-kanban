@@ -3,46 +3,56 @@ package manager;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.ArrayList;
+import java.util.List;
 
+import interfaces.TaskManager;
 import tasks.Status;
 import tasks.Task;
 import tasks.Epic;
 import tasks.Subtask;
 
-public class Manager {
+public class InMemoryTaskManager implements TaskManager {
     private Integer id;
     private final HashMap <Integer, Task> hmTask;
     private final HashMap <Integer, Epic> hmEpic;
     private final HashMap <Integer, Subtask> hmSubtask;
 
-    public Manager() {
+//    private List <Task> historyTasks;
+
+    public InMemoryTaskManager() {
         id=0;
         hmTask = new HashMap<>();
         hmEpic = new HashMap<>();
         hmSubtask = new HashMap<>();
+//        historyTasks = new ArrayList<>();
     }
 
+/*    @Override
+    public List <Task> getHistory() {
+            return historyTasks;
+    }*/
+    @Override
     public Collection<Task> getListTasks() {
         return hmTask.values();
     }
-
+    @Override
     public Collection<Epic> getListEpics() {
         return hmEpic.values();
     }
-
+    @Override
     public Collection<Subtask> getListSubtasks() {
         return hmSubtask.values();
     }
-
+    @Override
     public void deleteTasks() {
         hmTask.clear();
     }
-
+    @Override
     public void deleteEpics() {
         hmEpic.clear();
         hmSubtask.clear();
     }
-
+    @Override
     public void deleteSubtasks() {
         hmSubtask.clear();
         for (Integer key : hmEpic.keySet()) {
@@ -50,34 +60,37 @@ public class Manager {
             newSubtask.clear();
         }
     }
-
+    @Override
     public Task getTaskById(Integer id) {
         Task task = hmTask.get(id);
         return task;
     }
 
-    public Epic getEpicById(Integer id) {
+    @Override
+        public Epic getEpicById(Integer id) {
         Epic epic = hmEpic.get(id);
         return epic;
     }
-
+    @Override
     public Subtask getSubtaskById(Integer id) {
         Subtask subtask = hmSubtask.get(id);
         return subtask;
     }
-
+    @Override
     public int createTask(Task task) {
         task.setId(id);
         hmTask.put(task.getId(),task);
         this.id ++;
         return id;
     }
+    @Override
     public int createEpic(Epic epic) {
         epic.setId(id);
         hmEpic.put(epic.getId(),epic);
         this.id ++;
         return id;
     }
+    @Override
     public int createSubtask(Subtask subtask) {
         subtask.setId(id);
         hmSubtask.put(subtask.getId(),subtask);
@@ -85,17 +98,18 @@ public class Manager {
         this.id ++;
         return id;
     }
+    @Override
     public void updateTask(Task task) {
         hmTask.put(task.getId(),task);
     }
-
+    @Override
     public void updateEpic(Epic epic) {
         Integer idEpicToUpdate = epic.getId();
         ArrayList <Integer> oldIdSubtask = hmEpic.get(idEpicToUpdate).getIdSubtask();
         epic.setIdSubtask(oldIdSubtask);
         hmTask.put(epic.getId(),epic);
     }
-
+    @Override
     public void updateSubtask(Subtask subtask) {
         hmSubtask.put(subtask.getId(),subtask);
         int size = hmEpic.get(subtask.getIdEpic()).getIdSubtask().size();
@@ -119,11 +133,11 @@ public class Manager {
         }
         hmEpic.put(subtask.getIdEpic(),epic);
     }
-
+    @Override
     public void deleteTaskById(Integer id) {
         hmTask.remove(id);
     }
-
+    @Override
     public void deleteEpicById(Integer id) {
         for (Subtask subtask : hmSubtask.values()) {
             if (subtask.getIdEpic().equals(id)) {
@@ -132,6 +146,7 @@ public class Manager {
         }
         hmEpic.remove(id);
     }
+    @Override
     public void deleteSubtaskById(Integer id) {
         int i=0;
         for (Integer key : hmEpic.keySet()) {
@@ -145,7 +160,7 @@ public class Manager {
         }
         hmSubtask.remove(id);
     }
-
+    @Override
     public ArrayList<Subtask> getSubtasksByEpic(Integer id) {
         ArrayList<Subtask> listSubtasks = new ArrayList<>();
         for (Subtask subtask : hmSubtask.values()) {

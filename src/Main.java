@@ -1,15 +1,21 @@
 import java.util.ArrayList;
 import java.util.Collection;
 
+import interfaces.HistoryManager;
+import interfaces.TaskManager;
+import manager.InMemoryHistoryManager;
+import manager.Managers;
 import tasks.Status;
 import tasks.Task;
 import tasks.Epic;
 import tasks.Subtask;
-import manager.Manager;
+import manager.InMemoryTaskManager;
 
 public class Main {
     public static void main(String[] args) {
-        Manager manager = new Manager();
+        TaskManager manager = Managers.getDefault();
+        HistoryManager historyManager = Managers.getDefaultHistory();
+
 
         // создать 2 задачи, один эпик с 2 подзадачами и один эпик с 1 подзадачей
         Task task = new Task("Название","Описание",Status.NEW);
@@ -17,6 +23,18 @@ public class Main {
 
         Task task1 = new Task("Название1","Описание1",Status.NEW);
         manager.createTask(task1);
+
+        Task task5 = new Task("Название5","Описание5",Status.NEW);
+        manager.createTask(task5);
+
+        Task task6 = new Task("Название6","Описание6",Status.NEW);
+        manager.createTask(task6);
+
+        Task task7 = new Task("Название7","Описание7",Status.NEW);
+        manager.createTask(task7);
+
+        Task task8 = new Task("Название8","Описание8",Status.NEW);
+        manager.createTask(task8);
 
         ArrayList <Integer> idSubtask = new ArrayList<>();
         Epic epic = new Epic("Название епика", "Описание епика", Status.NEW, idSubtask);
@@ -38,7 +56,7 @@ public class Main {
         Subtask subtask2 = new Subtask("Название сабтаска2", "Описание сабтаска2", Status.NEW, idEpicForSubtask2);
         manager.createSubtask(subtask2);
 
-        //распечатать списки эпиков, задач и подзадач
+    /*    //распечатать списки эпиков, задач и подзадач
         Collection<Epic> listEpics = manager.getListEpics();
         for (Epic epics : listEpics) {
             System.out.println(epics);
@@ -52,9 +70,9 @@ public class Main {
         Collection<Subtask> listSubtasks = manager.getListSubtasks();
         for (Subtask subtasks : listSubtasks) {
             System.out.println(subtasks);
-        }
+        }*/
 
-        //изменить статусы созданных объектов - task1 и subtask2
+    /*    //изменить статусы созданных объектов - task1 и subtask2
         Task task2 = new Task("Название новое1", "Описание новое1", Status.IN_PROGRESS);
         int idTaskToUpdate = task1.getId(); //id таска который надо обновить
         task2.setId(idTaskToUpdate);
@@ -75,10 +93,10 @@ public class Main {
         Subtask subtask4 = new Subtask("Название сабтаска222", "Описание сабтаска2", Status.DONE, idEpicForSubtask4);
         int idSubtaskToUpdate1 = subtask.getId(); //id сабтаска который надо обновить
         subtask4.setId(idSubtaskToUpdate1);
-        manager.updateSubtask(subtask4);
+        manager.updateSubtask(subtask4);*/
 
         //распечатать  заново после обновления
-        Collection<Epic> listEpicsNew = manager.getListEpics();
+    /*    Collection<Epic> listEpicsNew = manager.getListEpics();
         for (Epic epics : listEpicsNew) {
             System.out.println(epics);
         }
@@ -91,7 +109,7 @@ public class Main {
         Collection<Subtask> listSubtasksNew = manager.getListSubtasks();
         for (Subtask subtasks : listSubtasksNew) {
             System.out.println(subtasks);
-        }
+        }*/
 
 /*        // получение списка всех задач, епиков, подзадач
         Collection<Epic> listEpics = manager.getListEpics();
@@ -112,13 +130,62 @@ public class Main {
         // удаление всех задач, епиков, подзадач
         manager.deleteTasks();
         manager.deleteEpics();
-        manager.deleteSubtasks();
+        manager.deleteSubtasks();*/
 
         // получение по id
-        int idTaskToGet = task1.getId();
-        System.out.println(manager.getTaskById(idTaskToGet));
+        manager.getTaskById(task1.getId());
+        historyManager.add(task1);
+        System.out.println(historyManager.getHistory());
+
+        manager.getTaskById(task1.getId());
+        historyManager.add(task1);
+        System.out.println(historyManager.getHistory());
+
+        manager.getTaskById(task1.getId());
+        historyManager.add(task1);
+        System.out.println(historyManager.getHistory());
+
+        manager.getTaskById(task1.getId());
+        historyManager.add(task1);
+        System.out.println(historyManager.getHistory());
+
+        manager.getTaskById(task1.getId());
+        historyManager.add(task1);
+        System.out.println(historyManager.getHistory());
+
+        int idTaskToGet1 = task8.getId();
+        manager.getTaskById(idTaskToGet1);
+        historyManager.add(task8);
+        System.out.println(historyManager.getHistory());
 
         int idEpicToGet = epic1.getId();
+        manager.getEpicById(idEpicToGet);
+        historyManager.add(epic1);
+        System.out.println(historyManager.getHistory());
+
+        int idTaskToGet2 = task7.getId();
+        manager.getTaskById(idTaskToGet2);
+        historyManager.add(task7);
+        System.out.println(historyManager.getHistory());
+
+        int idSubtaskToGet = subtask2.getId();
+        manager.getSubtaskById(idSubtaskToGet);
+        historyManager.add(subtask2);
+        System.out.println(historyManager.getHistory());
+
+        manager.getTaskById(task6.getId());
+        historyManager.add(task6);
+        System.out.println(historyManager.getHistory());
+
+        manager.getTaskById(task6.getId());
+        historyManager.add(task6);
+        System.out.println(historyManager.getHistory());
+
+        manager.getTaskById(task6.getId());
+        historyManager.add(task6);
+        System.out.println(historyManager.getHistory());
+
+    /*    int idEpicToGet = epic1.getId();
         System.out.println(manager.getEpicById(idEpicToGet));
 
         int idSubtaskToGet = subtask2.getId();
