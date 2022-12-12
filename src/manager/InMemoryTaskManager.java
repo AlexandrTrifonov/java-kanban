@@ -76,9 +76,7 @@ public class InMemoryTaskManager implements TaskManager {
     public void deleteSubtasks() {
         hmSubtask.clear();
         for (Integer key : hmEpic.keySet()) {
-            ArrayList<Integer> newSubtask = hmEpic.get(key).getIdSubtask();
             hmEpic.get(key).getIdSubtask().clear();
-            newSubtask.clear();
         }
     }
 
