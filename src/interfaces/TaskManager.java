@@ -13,7 +13,7 @@ import java.util.List;
 
 public interface TaskManager {
 
-//    List<Task> getHistory();
+    List<Task> getHistory();
     Collection<Task> getListTasks();
 
     Collection<Epic> getListEpics();
@@ -50,5 +50,6 @@ public interface TaskManager {
 
     void deleteSubtaskById(Integer id);
 
-    ArrayList<Subtask> getSubtasksByEpic(Integer id);
+    List<Subtask> getSubtasksByEpic(Integer id);
+
 }

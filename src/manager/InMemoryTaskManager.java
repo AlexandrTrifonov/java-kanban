@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.ArrayList;
 import java.util.List;
 
+import interfaces.HistoryManager;
 import interfaces.TaskManager;
 import tasks.Status;
 import tasks.Task;
@@ -17,20 +18,39 @@ public class InMemoryTaskManager implements TaskManager {
     private final HashMap <Integer, Epic> hmEpic;
     private final HashMap <Integer, Subtask> hmSubtask;
 
-//    private List <Task> historyTasks;
-
     public InMemoryTaskManager() {
         id=0;
         hmTask = new HashMap<>();
         hmEpic = new HashMap<>();
         hmSubtask = new HashMap<>();
-//        historyTasks = new ArrayList<>();
+    }
+    HistoryManager historyManager = Managers.getDefaultHistory();
+
+    @Override
+    public List<Task> getHistory() {
+        return historyManager.getHistory();
     }
 
-/*    @Override
-    public List <Task> getHistory() {
-            return historyTasks;
-    }*/
+    @Override
+    public Task getTaskById(Integer id) {
+        Task task = hmTask.get(id);
+        historyManager.add(task);
+        return task;
+    }
+
+    @Override
+    public Epic getEpicById(Integer id) {
+        Epic epic = hmEpic.get(id);
+        historyManager.add(epic);
+        return epic;
+    }
+    @Override
+    public Subtask getSubtaskById(Integer id) {
+        Subtask subtask = hmSubtask.get(id);
+        historyManager.add(subtask);
+        return subtask;
+    }
+
     @Override
     public Collection<Task> getListTasks() {
         return hmTask.values();
@@ -57,25 +77,11 @@ public class InMemoryTaskManager implements TaskManager {
         hmSubtask.clear();
         for (Integer key : hmEpic.keySet()) {
             ArrayList<Integer> newSubtask = hmEpic.get(key).getIdSubtask();
+            hmEpic.get(key).getIdSubtask().clear();
             newSubtask.clear();
         }
     }
-    @Override
-    public Task getTaskById(Integer id) {
-        Task task = hmTask.get(id);
-        return task;
-    }
 
-    @Override
-        public Epic getEpicById(Integer id) {
-        Epic epic = hmEpic.get(id);
-        return epic;
-    }
-    @Override
-    public Subtask getSubtaskById(Integer id) {
-        Subtask subtask = hmSubtask.get(id);
-        return subtask;
-    }
     @Override
     public int createTask(Task task) {
         task.setId(id);
