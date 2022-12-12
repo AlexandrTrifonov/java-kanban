@@ -5,10 +5,20 @@ import java.util.ArrayList;
 public class Epic extends Task {
 
     private ArrayList<Integer> idSubtask;
+    private Status statusEpic;
 
     public Epic (String name, String description, Status status, ArrayList<Integer> idSubtask) {
         super(name, description, status);
         this.idSubtask = idSubtask;
+    }
+
+    @Override
+    public Status getStatus() {
+        return  statusEpic;
+    }
+
+    public void setStatus(Status statusEpic) {
+        this.statusEpic=statusEpic;
     }
 
     public void setIdSubtask(ArrayList<Integer> idSubtask) {
