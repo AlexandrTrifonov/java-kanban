@@ -1,5 +1,7 @@
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.LinkedList;
+import java.util.Map;
 
 import interfaces.HistoryManager;
 import interfaces.TaskManager;
@@ -16,79 +18,42 @@ public class Main {
 
         TaskManager manager = Managers.getDefault();
 
-        Task task = new Task("Название","Описание",Status.NEW);
-        manager.createTask(task);
-
-        Task task1 = new Task("Название1","Описание1",Status.NEW);
+        Task task1 = new Task("Название1","Описание1");
         manager.createTask(task1);
 
-        Task task5 = new Task("Название5","Описание5",Status.NEW);
+        Task task5 = new Task("Название5","Описание5");
         manager.createTask(task5);
 
-        Task task6 = new Task("Название6","Описание6",Status.NEW);
-        manager.createTask(task6);
-
-        Task task7 = new Task("Название7","Описание7",Status.NEW);
-        manager.createTask(task7);
-
-        Task task8 = new Task("Название8","Описание8",Status.NEW);
-        manager.createTask(task8);
-
-        ArrayList <Integer> idSubtask = new ArrayList<>();
-        Epic epic = new Epic("Название епика", "Описание епика", Status.NEW, idSubtask);
-        manager.createEpic(epic);
-
-        ArrayList <Integer> idSubtask1 = new ArrayList<>();
-        Epic epic1 = new Epic("Название епика1", "Описание епика1", Status.NEW, idSubtask1);
+        Epic epic1 = new Epic("Эпик1", "Описание епика1");
         manager.createEpic(epic1);
 
-        Integer idEpicForSubtask = epic.getId();
-        Subtask subtask = new Subtask("Название сабтаска", "Описание сабтаска", Status.NEW, idEpicForSubtask);
+        Epic epic = new Epic("Эпик", "Описание епика");
+        manager.createEpic(epic);
+
+        Subtask subtask = new Subtask("Сабтаск эпика", "Описание сабтаска", epic.getId());
         manager.createSubtask(subtask);
 
+        Subtask subtask3 = new Subtask("Сабтаск3 эпика", "Описание сабтаска", epic.getId());
+        manager.createSubtask(subtask3);
+
         Integer idEpicForSubtask1 = epic.getId();
-        Subtask subtask1 = new Subtask("Название сабтаска1", "Описание сабтаска1", Status.NEW, idEpicForSubtask1);
+        Subtask subtask1 = new Subtask("Сабтаск1 эпика", "Описание сабтаска1", idEpicForSubtask1);
         manager.createSubtask(subtask1);
 
-        Integer idEpicForSubtask2 = epic1.getId();
-        Subtask subtask2 = new Subtask("Название сабтаска2", "Описание сабтаска2", Status.NEW, idEpicForSubtask2);
-        manager.createSubtask(subtask2);
-
-        // получение по id
         manager.getTaskById(task1.getId());
-        System.out.println(manager.getHistory());
-
-        manager.getTaskById(task1.getId());
-        System.out.println(manager.getHistory());
-
-        manager.getTaskById(task1.getId());
-        System.out.println(manager.getHistory());
-
-        manager.getTaskById(task1.getId());
-        System.out.println(manager.getHistory());
-
-        manager.getTaskById(task1.getId());
-        System.out.println(manager.getHistory());
-
-        manager.getTaskById(task8.getId());
-        System.out.println(manager.getHistory());
-
+        manager.getTaskById(task5.getId());
+        manager.getEpicById(epic.getId());
         manager.getEpicById(epic1.getId());
-        System.out.println(manager.getHistory());
+        manager.getEpicById(epic.getId());
+        manager.getSubtaskById(subtask.getId());
+        manager.getSubtaskById(subtask3.getId());
+        manager.getSubtaskById(subtask1.getId());
+        manager.getSubtaskById(subtask.getId());
 
-        manager.getTaskById(task7.getId());
         System.out.println(manager.getHistory());
-
-        manager.getSubtaskById(subtask2.getId());
-        System.out.println(manager.getHistory());
-
-        manager.getTaskById(task6.getId());
-        System.out.println(manager.getHistory());
-
-        manager.getTaskById(task6.getId());
-        System.out.println(manager.getHistory());
-
-        manager.getTaskById(task6.getId());
+        manager.deleteTaskById(task1.getId());
+        manager.deleteSubtaskById(subtask1.getId());
+        manager.deleteEpicById(epic.getId());
         System.out.println(manager.getHistory());
     }
 }
