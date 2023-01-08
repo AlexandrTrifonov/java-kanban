@@ -4,9 +4,9 @@ import tasks.Task;
 
 public class Node {
 
-        public Task task;
-        public Node next;
-        public Node prev;
+        Task task;
+        Node next;
+        Node prev;
 
         public Node(Node prev, Task task, Node next) {
             this.task = task;
