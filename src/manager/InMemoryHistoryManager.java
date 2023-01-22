@@ -30,7 +30,7 @@ public class InMemoryHistoryManager implements HistoryManager {
     }
 
     CustomLinkedList<Task> customLinkedList = new CustomLinkedList();
-    public class CustomLinkedList<T> {
+    private class CustomLinkedList<T> {
 
         private Node head;
         private Node tail;
@@ -56,6 +56,7 @@ public class InMemoryHistoryManager implements HistoryManager {
             }
             return historyList;
         }
+
        public void removeNode(Node node) {
 
             if (node != null) {

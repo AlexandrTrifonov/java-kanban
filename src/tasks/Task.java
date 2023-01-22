@@ -5,16 +5,13 @@ public class Task {
     protected String name;
     protected String description;
     protected Status status;
+    protected Type type;
 
-/*    public Task (String name, String description, Status status) {
-        this.name=name;
-        this.description=description;
-        this.status = status;
-    }*/
     public Task (String name, String description) {
         this.name=name;
         this.description=description;
         this.status = Status.NEW;
+        this.type = Type.TASK;
     }
     public void setId(Integer id) {
           this.id=id;
@@ -47,12 +44,36 @@ public class Task {
         return  status;
     }
 
-    @Override
+    public Type getType() {
+        return type;
+    }
+
+    public void setType(Type type) {
+        this.type = type;
+    }
+
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        sb.append(getId());
+        sb.append(",");
+        sb.append(Type.TASK);
+        sb.append(",");
+        sb.append(getName());
+        sb.append(",");
+        sb.append(getStatus());
+        sb.append(",");
+        sb.append(getDescription());
+        sb.append("\n");
+        return sb.toString();
+    }
+
+
+/*    @Override
     public String toString() {
         return "Task{" +
                 "name='" + name + '\'' +
                 '}';
-    }
+    }*/
     /*
     @Override
     public String toString() {

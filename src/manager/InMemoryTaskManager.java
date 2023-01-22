@@ -18,6 +18,18 @@ public class InMemoryTaskManager implements TaskManager {
     private final HashMap <Integer, Epic> hmEpic;
     private final HashMap <Integer, Subtask> hmSubtask;
 
+    public HashMap<Integer, Task> getHmTask() {
+        return hmTask;
+    }
+
+    public HashMap<Integer, Epic> getHmEpic() {
+        return hmEpic;
+    }
+
+    public HashMap<Integer, Subtask> getHmSubtask() {
+        return hmSubtask;
+    }
+
     public InMemoryTaskManager() {
         id=0;
         hmTask = new HashMap<>();

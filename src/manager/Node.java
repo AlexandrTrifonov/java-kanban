@@ -37,5 +37,4 @@ public class Node {
             this.next = next;
             this.prev = prev;
         }
-
 }
