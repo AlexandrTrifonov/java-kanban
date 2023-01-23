@@ -48,10 +48,6 @@ public class Task {
         return type;
     }
 
-    public void setType(Type type) {
-        this.type = type;
-    }
-
     public String toString() {
         StringBuilder sb = new StringBuilder();
         sb.append(getId());
