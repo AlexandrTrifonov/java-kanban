@@ -13,10 +13,25 @@ public class Epic extends Task {
         this.idSubtask = new ArrayList<>();
         this.status = Status.NEW;
         this.type = Type.EPIC;
+        this.duration = 0;
+        this.startTime = null;
+    }
+
+    public Epic (String name, String description, int duration, String startTime) {
+        super(name, description);
+        this.idSubtask = new ArrayList<>();
+        this.status = Status.NEW;
+        this.type = Type.EPIC;
+        this.duration = duration;
+        this.startTime = startTime;
     }
 
     public Status getStat() {
         return  status;
+    }
+
+    public void setStat(Status status) {
+        this.status=status;
     }
     @Override
     public Status getStatus() {
@@ -44,6 +59,10 @@ public class Epic extends Task {
         sb.append(getName());
         sb.append(",");
         sb.append(getStat());
+        sb.append(",");
+        sb.append(getDuration());
+        sb.append(",");
+        sb.append(getStartTime());
         sb.append(",");
         sb.append(getDescription());
         sb.append("\n");

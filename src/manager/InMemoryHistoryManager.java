@@ -19,8 +19,10 @@ public class InMemoryHistoryManager implements HistoryManager {
 
     @Override
     public void add(Task task) {
-        customLinkedList.removeNode(idHM.get(task.getId()));
-        customLinkedList.linkLast(task);
+        if (task != null) {
+            customLinkedList.removeNode(idHM.get(task.getId()));
+            customLinkedList.linkLast(task);
+        }
     }
     @Override
     public void remove(int id) {

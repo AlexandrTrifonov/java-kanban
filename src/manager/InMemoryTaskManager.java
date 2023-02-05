@@ -1,9 +1,8 @@
 package manager;
 
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.ArrayList;
-import java.util.List;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.*;
 
 import interfaces.HistoryManager;
 import interfaces.TaskManager;
@@ -45,9 +44,12 @@ public class InMemoryTaskManager implements TaskManager {
 
     @Override
     public Task getTaskById(Integer id) {
-        Task task = hmTask.get(id);
-        historyManager.add(task);
-        return task;
+        if (id!=null && id < this.id) {
+            Task task = hmTask.get(id);
+            historyManager.add(task);
+            return task;
+        }
+        return null;
     }
     @Override
     public Epic getEpicById(Integer id) {
@@ -90,28 +92,83 @@ public class InMemoryTaskManager implements TaskManager {
             hmEpic.get(key).getIdSubtask().clear();
         }
     }
-
+    @Override
+    public int validation(Task task) {
+        String start = task.getStartTime();
+        if (start == null) {
+            return 1;
+        }
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
+        LocalDateTime startTime = LocalDateTime.parse(start, formatter);
+        int durMinusOne = task.getDuration()-1;
+        LocalDateTime endTime = startTime.plusMinutes(durMinusOne);
+        ArrayList<Task> list = getPrioritizedTasks();
+        int mark = 1;
+        if (list.isEmpty()) {
+            mark = 1;
+            return mark;
+        } else {
+            for(Task tasks : list) {
+                String startTasks = tasks.getStartTime();
+                if (startTasks != null) {
+                    LocalDateTime startTimeTask = LocalDateTime.parse(startTasks, formatter);
+                    int durTaskMinusOne = tasks.getDuration();
+                    LocalDateTime endTimeTask = startTimeTask.plusMinutes(durTaskMinusOne);
+                    if (startTimeTask.isBefore(startTime) && endTimeTask.isAfter(startTime)) {
+                        mark = 0;
+                        break;
+                   }
+                       if (startTimeTask.isBefore(endTime) && endTimeTask.isAfter(endTime)) {
+                       mark = 0;
+                       break;
+                   }
+               }
+            }
+        }
+        return mark;
+    }
     @Override
     public int createTask(Task task) {
-        task.setId(id);
-        hmTask.put(task.getId(),task);
-        this.id ++;
-        return id;
+        if (validation(task) == 1) {
+            task.setId(id);
+            hmTask.put(task.getId(),task);
+            treeSetPrioritized.add(task);
+            this.id ++;
+            return task.getId();
+        }
+        return -1;
     }
     @Override
     public int createEpic(Epic epic) {
         epic.setId(id);
         hmEpic.put(epic.getId(),epic);
         this.id ++;
-        return id;
+        return epic.getId();
     }
     @Override
     public int createSubtask(Subtask subtask) {
-        subtask.setId(id);
-        hmSubtask.put(subtask.getId(),subtask);
-        hmEpic.get(subtask.getIdEpic()).getIdSubtask().add(id);
-        this.id ++;
-        return id;
+        int mark = validation(subtask);
+        if (mark == 1) {
+            subtask.setId(id);
+            hmSubtask.put(subtask.getId(), subtask);
+            hmEpic.get(subtask.getIdEpic()).getIdSubtask().add(id);
+            Epic epic = hmEpic.get(subtask.getIdEpic());
+
+            String start = subtask.getStartTime();
+            if (start != null) {
+                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
+                LocalDateTime startTime = LocalDateTime.parse(start, formatter);
+            }
+            int dur = epic.getDuration() + subtask.getDuration();
+            epic.setDuration(dur);
+            epic.setStartTime(start);
+            hmEpic.put(subtask.getIdEpic(),epic);
+
+            treeSetPrioritized.add(subtask);
+            this.id++;
+            return subtask.getId();
+        }
+        return -1;
     }
     @Override
     public void updateTask(Task task) {
@@ -122,7 +179,7 @@ public class InMemoryTaskManager implements TaskManager {
         Integer idEpicToUpdate = epic.getId();
         ArrayList <Integer> oldIdSubtask = hmEpic.get(idEpicToUpdate).getIdSubtask();
         epic.setIdSubtask(oldIdSubtask);
-        hmTask.put(epic.getId(),epic);
+        hmEpic.put(epic.getId(),epic);
     }
     @Override
     public void updateSubtask(Subtask subtask) {
@@ -140,11 +197,11 @@ public class InMemoryTaskManager implements TaskManager {
         }
         Epic epic = hmEpic.get(subtask.getIdEpic());
         if (size==countnew) {
-            epic.setStatus(Status.NEW);
+            epic.setStat(Status.NEW);
         } else if (size==countdone) {
-            epic.setStatus(Status.DONE);
+            epic.setStat(Status.DONE);
         } else {
-            epic.setStatus(Status.IN_PROGRESS);
+            epic.setStat(Status.IN_PROGRESS);
         }
         hmEpic.put(subtask.getIdEpic(),epic);
     }
@@ -190,4 +247,22 @@ public class InMemoryTaskManager implements TaskManager {
         }
         return listSubtasks;
     }
+    @Override
+    public ArrayList<Task> getPrioritizedTasks() {
+        ArrayList<Task> list = new ArrayList<>();
+        for (Task task : treeSetPrioritized) {
+            list.add(task);
+        }
+        return list;
+    }
+    static TreeSet<Task> treeSetPrioritized = new TreeSet<>((o1, o2) -> {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
+        if (o1.getStartTime() == null) return 1;
+        if (o2.getStartTime() == null) return -1;
+        LocalDateTime startTime1 = LocalDateTime.parse(o1.getStartTime(), formatter);
+        LocalDateTime startTime2 = LocalDateTime.parse(o2.getStartTime(), formatter);
+        if (startTime1.isBefore(startTime2)) return -1;
+        if (startTime1.isAfter(startTime2)) return 1;
+        else return o1.getId() - o2.getId();
+    });
 }

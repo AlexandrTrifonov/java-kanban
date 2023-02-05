@@ -53,4 +53,7 @@ public interface TaskManager {
 
     List<Subtask> getSubtasksByEpic(Integer id);
 
+    ArrayList<Task> getPrioritizedTasks();
+
+    int validation(Task task);
 }

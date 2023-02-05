@@ -1,7 +1,5 @@
-id,type,name.status.description,epic
-1,TASK,Название5,NEW,Описание5
-3,EPIC,Эпик,NEW,Описание епика
-4,SUBTASK,Сабтаск эпика,NEW,Описание сабтаска,3
-5,SUBTASK,Сабтаск3 эпика,NEW,Описание сабтаска,3
+id,type,name,status,duration,startTime,description,epic
+0,EPIC,Эпик,DONE,250,2023-03-07 18:10,Описание епика
+1,SUBTASK,Сабтаск3 эпика,DONE,250,2023-03-07 18:10,Описание сабтаска,0
 
-1,3,5,4
+0,1
