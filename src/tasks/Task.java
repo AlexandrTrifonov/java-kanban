@@ -1,5 +1,9 @@
 package tasks;
 
+import java.time.Duration;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+
 public class Task {
     protected Integer id;
     protected String name;
@@ -7,7 +11,9 @@ public class Task {
     protected Status status;
     protected Type type;
     protected int duration;
-    protected String startTime;
+    protected LocalDateTime startTime;
+    protected LocalDateTime endTime;
+    protected String time;
 
     public Task (String name, String description) {
         this.name=name;
@@ -15,7 +21,9 @@ public class Task {
         this.status = Status.NEW;
         this.type = Type.TASK;
         this.duration = 100;
+        this.time="";
         this.startTime = null;
+        this.endTime = getEndTime();
     }
     public Task (Integer id, String name, String description) {
         this.id=id;
@@ -25,9 +33,10 @@ public class Task {
         this.type = Type.TASK;
         this.duration = 100;
         this.startTime = null;
+        this.endTime = getEndTime();
     }
 
-    public Task (Integer id, String name, String description, int duration, String startTime) {
+    public Task (Integer id, String name, String description, int duration, LocalDateTime startTime) {
         this.id=id;
         this.name=name;
         this.description=description;
@@ -35,6 +44,7 @@ public class Task {
         this.type = Type.TASK;
         this.duration = duration;
         this.startTime = startTime;
+        this.endTime = getEndTime();
     }
 
     public Task (String name, String description, int duration) {
@@ -44,15 +54,43 @@ public class Task {
         this.type = Type.TASK;
         this.duration = duration;
         this.startTime = null;
+        this.endTime = getEndTime();
+
     }
-    public Task (String name, String description, int duration, String startTime) {
+    public Task (String name, String description, int duration, LocalDateTime startTime) {
         this.name=name;
         this.description=description;
         this.status = Status.NEW;
         this.type = Type.TASK;
         this.duration = duration;
         this.startTime = startTime;
+        this.endTime = getEndTime();
     }
+
+    public Task (String name, String description, int duration, String time) {
+        this.name=name;
+        this.description=description;
+        this.status = Status.NEW;
+        this.type = Type.TASK;
+        this.duration = duration;
+        this.time=time;
+        if (time != "null") {
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
+            LocalDateTime startTime = LocalDateTime.parse(time, formatter);
+            this.startTime = startTime;
+        } else {
+            this.endTime = getEndTime();
+        }
+    }
+
+    public LocalDateTime getEndTime() {
+        Duration dur = Duration.ofMinutes(duration);
+        if (startTime != null) {
+            return startTime.plus(dur);
+        }
+        return null;
+    }
+
     public void setId(Integer id) {
           this.id=id;
     }
@@ -95,11 +133,18 @@ public class Task {
         return duration;
     }
 
-    public void setStartTime(String startTime) {
+    public void setTime(String time) {
+        this.time=time;
+    }
+
+    public String getTime() {
+        return  time;
+    }
+    public void setStartTime(LocalDateTime startTime) {
         this.startTime=startTime;
     }
 
-    public String getStartTime() {
+    public LocalDateTime getStartTime() {
         return  startTime;
     }
 
@@ -115,7 +160,7 @@ public class Task {
         sb.append(",");
         sb.append(getDuration());
         sb.append(",");
-        sb.append(getStartTime());
+        sb.append(getTime());
         sb.append(",");
         sb.append(getDescription());
         sb.append("\n");

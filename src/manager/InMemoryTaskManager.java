@@ -16,6 +16,7 @@ public class InMemoryTaskManager implements TaskManager {
     private final HashMap <Integer, Task> hmTask;
     private final HashMap <Integer, Epic> hmEpic;
     private final HashMap <Integer, Subtask> hmSubtask;
+    private final TreeSet<Task> treeSetPrioritized;
 
     public HashMap<Integer, Task> getHmTask() {
         return hmTask;
@@ -34,6 +35,18 @@ public class InMemoryTaskManager implements TaskManager {
         hmTask = new HashMap<>();
         hmEpic = new HashMap<>();
         hmSubtask = new HashMap<>();
+        treeSetPrioritized = new TreeSet<>((o1, o2) -> {
+        //    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
+            if (o1.getStartTime() == null) return 1;
+            if (o2.getStartTime() == null) return -1;
+            LocalDateTime startTime1 = o1.getStartTime();
+            LocalDateTime startTime2 = o2.getStartTime();
+        //    LocalDateTime startTime1 = LocalDateTime.parse(o1.getStartTime(), formatter);
+        //    LocalDateTime startTime2 = LocalDateTime.parse(o2.getStartTime(), formatter);
+            if (startTime1.isBefore(startTime2)) return -1;
+            if (startTime1.isAfter(startTime2)) return 1;
+            else return o1.getId() - o2.getId();
+        });
     }
     HistoryManager historyManager = Managers.getDefaultHistory();
 
@@ -94,12 +107,13 @@ public class InMemoryTaskManager implements TaskManager {
     }
     @Override
     public int validation(Task task) {
-        String start = task.getStartTime();
-        if (start == null) {
+    //    String start = task.getStartTime();
+        LocalDateTime startTime = task.getStartTime();
+        if (startTime == null) {
             return 1;
         }
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
-        LocalDateTime startTime = LocalDateTime.parse(start, formatter);
+    /*    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
+        LocalDateTime startTime = LocalDateTime.parse(start, formatter);*/
         int durMinusOne = task.getDuration()-1;
         LocalDateTime endTime = startTime.plusMinutes(durMinusOne);
         ArrayList<Task> list = getPrioritizedTasks();
@@ -109,18 +123,19 @@ public class InMemoryTaskManager implements TaskManager {
             return mark;
         } else {
             for(Task tasks : list) {
-                String startTasks = tasks.getStartTime();
-                if (startTasks != null) {
-                    LocalDateTime startTimeTask = LocalDateTime.parse(startTasks, formatter);
+            //    String startTasks = tasks.getStartTime();
+                LocalDateTime startTimeTask = tasks.getStartTime();
+                if (startTimeTask != null) {
+                //    LocalDateTime startTimeTask = LocalDateTime.parse(startTasks, formatter);
                     int durTaskMinusOne = tasks.getDuration();
                     LocalDateTime endTimeTask = startTimeTask.plusMinutes(durTaskMinusOne);
                     if (startTimeTask.isBefore(startTime) && endTimeTask.isAfter(startTime)) {
-                        mark = 0;
-                        break;
+                        return 0;
+                    //    break;
                    }
-                       if (startTimeTask.isBefore(endTime) && endTimeTask.isAfter(endTime)) {
-                       mark = 0;
-                       break;
+                   if (startTimeTask.isBefore(endTime) && endTimeTask.isAfter(endTime)) {
+                       return 0;
+                   //    break;
                    }
                }
             }
@@ -145,6 +160,8 @@ public class InMemoryTaskManager implements TaskManager {
         this.id ++;
         return epic.getId();
     }
+
+
     @Override
     public int createSubtask(Subtask subtask) {
         int mark = validation(subtask);
@@ -154,14 +171,27 @@ public class InMemoryTaskManager implements TaskManager {
             hmEpic.get(subtask.getIdEpic()).getIdSubtask().add(id);
             Epic epic = hmEpic.get(subtask.getIdEpic());
 
-            String start = subtask.getStartTime();
-            if (start != null) {
-                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
-                LocalDateTime startTime = LocalDateTime.parse(start, formatter);
+            int count = 0;
+            Integer idEpic = subtask.getIdEpic();
+            LocalDateTime startTimeEpic = null;
+            int dur = 0;
+            for (Integer idSubtask : hmEpic.get(idEpic).getIdSubtask()) {
+                LocalDateTime startTime = hmSubtask.get(idSubtask).getStartTime();
+                dur = dur + hmSubtask.get(idSubtask).getDuration();
+                if (count == 0) {
+                    startTimeEpic = startTime;
+                    count++;
+                } else {
+                    if (startTime!=null) {
+                        if (startTime.isBefore(startTimeEpic)) {
+                            startTimeEpic = startTime;
+                        }
+                    }
+                }
             }
-            int dur = epic.getDuration() + subtask.getDuration();
+
             epic.setDuration(dur);
-            epic.setStartTime(start);
+            epic.setStartTime(startTimeEpic);
             hmEpic.put(subtask.getIdEpic(),epic);
 
             treeSetPrioritized.add(subtask);
@@ -172,7 +202,10 @@ public class InMemoryTaskManager implements TaskManager {
     }
     @Override
     public void updateTask(Task task) {
-        hmTask.put(task.getId(),task);
+        int mark = validation(task);
+        if (mark == 1) {
+            hmTask.put(task.getId(),task);
+        }
     }
     @Override
     public void updateEpic(Epic epic) {
@@ -183,27 +216,30 @@ public class InMemoryTaskManager implements TaskManager {
     }
     @Override
     public void updateSubtask(Subtask subtask) {
-        hmSubtask.put(subtask.getId(),subtask);
-        int size = hmEpic.get(subtask.getIdEpic()).getIdSubtask().size();
-        int countnew = 0;
-        int countdone = 0;
-        for (int i=0; i<size; i++) {
-            Integer zz = hmEpic.get(subtask.getIdEpic()).getIdSubtask().get(i);
-            if (hmSubtask.get(zz).getStatus().equals(Status.NEW)){
-                countnew ++;
-            } else if (hmSubtask.get(zz).getStatus().equals(Status.DONE)){
-                countdone ++;
+        int mark = validation(subtask);
+        if (mark == 1) {
+            hmSubtask.put(subtask.getId(),subtask);
+            int size = hmEpic.get(subtask.getIdEpic()).getIdSubtask().size();
+            int countnew = 0;
+            int countdone = 0;
+            for (int i=0; i<size; i++) {
+                Integer zz = hmEpic.get(subtask.getIdEpic()).getIdSubtask().get(i);
+                if (hmSubtask.get(zz).getStatus().equals(Status.NEW)){
+                    countnew ++;
+                } else if (hmSubtask.get(zz).getStatus().equals(Status.DONE)){
+                    countdone ++;
+                }
             }
+            Epic epic = hmEpic.get(subtask.getIdEpic());
+            if (size==countnew) {
+                epic.setStat(Status.NEW);
+            } else if (size==countdone) {
+                epic.setStat(Status.DONE);
+            } else {
+                epic.setStat(Status.IN_PROGRESS);
+            }
+            hmEpic.put(subtask.getIdEpic(),epic);
         }
-        Epic epic = hmEpic.get(subtask.getIdEpic());
-        if (size==countnew) {
-            epic.setStat(Status.NEW);
-        } else if (size==countdone) {
-            epic.setStat(Status.DONE);
-        } else {
-            epic.setStat(Status.IN_PROGRESS);
-        }
-        hmEpic.put(subtask.getIdEpic(),epic);
     }
     @Override
     public void deleteTaskById(Integer id) {
@@ -255,7 +291,7 @@ public class InMemoryTaskManager implements TaskManager {
         }
         return list;
     }
-    static TreeSet<Task> treeSetPrioritized = new TreeSet<>((o1, o2) -> {
+ /*   static TreeSet<Task> treeSetPrioritized = new TreeSet<>((o1, o2) -> {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
         if (o1.getStartTime() == null) return 1;
         if (o2.getStartTime() == null) return -1;
@@ -264,5 +300,5 @@ public class InMemoryTaskManager implements TaskManager {
         if (startTime1.isBefore(startTime2)) return -1;
         if (startTime1.isAfter(startTime2)) return 1;
         else return o1.getId() - o2.getId();
-    });
+    });*/
 }

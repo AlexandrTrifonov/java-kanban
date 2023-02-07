@@ -29,6 +29,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
         switch (Type.valueOf(lineContents[1])) {
             case TASK:
                 Task task = new Task(lineContents[2],lineContents[6],Integer.parseInt(lineContents[4]),lineContents[5]);
+            //    Task task = new Task(lineContents[2],lineContents[6],Integer.parseInt(lineContents[4]));
                 task.setId(Integer.parseInt(lineContents[0]));
                 task.setStatus(Status.valueOf(lineContents[3]));
                 return task;
@@ -199,14 +200,11 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
         Task task11 = new Task("Название1","Описание1",150,"2023-03-01 10:00");
         manager.createTask(task11);
 
-        Task task51 = new Task("Название5","Описание5",50,"2023-03-01 14:00");
+        Task task51 = new Task("Название5","Описание5",50,"2023-03-01 16:00");
         manager.createTask(task51);
 
         Task task31 = new Task("Название5","Описание5",50,"2023-03-01 12:00");
         manager.createTask(task31);
-
-        Task task21 = new Task("Название5","Описание5",50);
-        manager.createTask(task21);
 
         Epic epic11 = new Epic("Эпик1", "Описание епика1");
         manager.createEpic(epic11);
@@ -214,14 +212,14 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
         Epic epic10 = new Epic("Эпик", "Описание епика");
         manager.createEpic(epic10);
 
-        Subtask subtask20 = new Subtask("Сабтаск эпика", "Описание сабтаска", epic10.getId(),50,"2023-03-02 12:00");
+        Subtask subtask20 = new Subtask("Сабтаск эпика", "Описание сабтаска", epic10.getId(),50,"2023-03-03 12:00");
         manager.createSubtask(subtask20);
 
-        Subtask subtask23 = new Subtask("Сабтаск3 эпика", "Описание сабтаска", epic10.getId(),50,"2023-03-01 14:00");
+        Subtask subtask23 = new Subtask("Сабтаск3 эпика", "Описание сабтаска", epic10.getId(),50,"2023-03-03 10:00");
         manager.createSubtask(subtask23);
 
         manager.getTaskById(0);
-        manager.getTaskById(2);
+        manager.getTaskById(1);
 
         TaskManager newManager = null;
         try {

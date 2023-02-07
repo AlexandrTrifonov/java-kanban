@@ -1,5 +1,8 @@
 package tasks;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+
 public class Subtask extends Task{
 
     private Integer idEpic;
@@ -11,6 +14,7 @@ public class Subtask extends Task{
         this.type = Type.SUBTASK;
         this.duration = 100;
         this.startTime = null;
+        this.endTime = getEndTime();
     }
 
     public Subtask (String name, String description, Integer idEpic, int duration) {
@@ -20,26 +24,42 @@ public class Subtask extends Task{
         this.type = Type.SUBTASK;
         this.duration = duration;
         this.startTime = null;
+        this.endTime = getEndTime();
     }
 
-    public Subtask (String name, String description, Integer idEpic, int duration, String startTime) {
-    //    super(name, description, duration, startTime);
+    public Subtask (String name, String description, Integer idEpic, int duration, String time) {
         super(name, description);
         this.idEpic=idEpic;
         this.status = Status.NEW;
         this.type = Type.SUBTASK;
         this.duration = duration;
-        this.startTime = startTime;
+        this.time=time;
+        if (!time.isEmpty() || !time.isBlank() || time.equals(null)) {
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
+            LocalDateTime startTime = LocalDateTime.parse(time, formatter);
+            this.startTime = startTime;
+        } else {
+            this.startTime = null;
+        }
+        this.endTime = getEndTime();
     }
 
-    public Subtask (Status status, String name, String description, Integer idEpic, int duration, String startTime) {
+    public Subtask (Status status, String name, String description, Integer idEpic, int duration, String time) {
         //    super(name, description, duration, startTime);
         super(name, description);
         this.idEpic=idEpic;
         this.status = status;
         this.type = Type.SUBTASK;
         this.duration = duration;
-        this.startTime = startTime;
+        this.time=time;
+        if (!time.isEmpty() || !time.isBlank() || !time.equals(null)) {
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
+            LocalDateTime startTime = LocalDateTime.parse(time, formatter);
+            this.startTime = startTime;
+        } else {
+            this.startTime = null;
+        }
+        this.endTime = getEndTime();
     }
 
     public void setIdEpic(Integer idEpic) {
@@ -48,6 +68,14 @@ public class Subtask extends Task{
 
     public Integer getIdEpic() {
         return idEpic;
+    }
+
+    public void setStartTime(LocalDateTime startTime) {
+        this.startTime=startTime;
+    }
+
+    public LocalDateTime getStartTime() {
+        return  startTime;
     }
 
     public String toString() {
@@ -62,7 +90,7 @@ public class Subtask extends Task{
         sb.append(",");
         sb.append(getDuration());
         sb.append(",");
-        sb.append(getStartTime());
+        sb.append(getTime());
         sb.append(",");
         sb.append(getDescription());
         sb.append(",");

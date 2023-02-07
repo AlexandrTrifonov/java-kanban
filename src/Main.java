@@ -19,7 +19,7 @@ public class Main {
 
         TaskManager manager = Managers.getDefault();
 
-        Task task11 = new Task("Название1","Описание1",150,"2023-03-01 10:00");
+        Task task11 = new Task("Название1","Описание1",150,"2023-03-01 14:00");
         manager.createTask(task11);
 
         Task task51 = new Task("Название5","Описание5",50,"2023-03-01 14:00");
