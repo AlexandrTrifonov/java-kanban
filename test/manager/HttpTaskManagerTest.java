@@ -21,10 +21,12 @@ class HttpTaskManagerTest {
 
     @BeforeAll
     public static void startServer() throws IOException {
+
         new KVServer().start();
     }
 
     @BeforeEach
+
     public void beforeEach() {
         manager = Managers.getDefault();
     }

@@ -47,8 +47,6 @@ public class Main {
         System.out.println("Вывод списка задач " + newManager.getListTasks());
         System.out.println("Вывод списка эпиков " + newManager.getListEpics());
         System.out.println("Вывод списка подзадач " + newManager.getListSubtasks());
-        System.out.println("Вывод из нового менеджера " + newManager.getSubtaskById(3));
-    //    System.out.println("Вывод из нового менеджера " + newManager.getEpicById(2));
 
 
     }

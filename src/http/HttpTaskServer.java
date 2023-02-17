@@ -27,11 +27,37 @@ import java.util.Optional;
 
 public class HttpTaskServer {
 
+    private HttpServer server;
     private static final int PORT = 8080;
     private static final Charset DEFAULT_CHARSET = StandardCharsets.UTF_8;
     private static final Gson gson = new Gson();
     static String pathFile = "test.csv";
     private static final FileBackedTasksManager managerBack = new FileBackedTasksManager(pathFile);
+
+    public HttpTaskServer() throws IOException {
+
+    //    this.manager = manager;
+
+        server = HttpServer.create();
+
+        server.bind(new InetSocketAddress(PORT), 0);
+
+        server.createContext("/tasks", new TasksHandler());
+
+    }
+    public void start() {
+
+        server.start();
+        System.out.println("HTTP-сервер запущен на " + PORT + " порту!");
+
+    }
+
+    public void stop() {
+
+        server.stop(0);
+        System.out.println("HTTP-сервер остановлен на " + PORT + " порту!");
+
+    }
 
     public static void main(String[] args) throws IOException, InterruptedException {
 
@@ -50,7 +76,6 @@ public class HttpTaskServer {
             Endpoint endpoint = getEndpoint(exchange.getRequestURI().getPath(),exchange.getRequestURI().getQuery(),exchange.getRequestMethod());
             switch (endpoint) {
                 case GET_PRIORITIZED_TASKS: {
-                    writeResponse(exchange, "Эндпоинт GET_PRIORITIZED_TASKS", 200);
                     handleGetPrioritizedTasks(exchange);
                     break;
                 }
