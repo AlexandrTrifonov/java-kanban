@@ -57,7 +57,7 @@ public class InMemoryTaskManager implements TaskManager {
 
     @Override
     public Task getTaskById(Integer id) {
-        if (id!=null && id < this.id) {
+        if (id!=null && id <= this.id) {
             Task task = hmTask.get(id);
             historyManager.add(task);
             return task;
@@ -132,11 +132,11 @@ public class InMemoryTaskManager implements TaskManager {
                     if (startTimeTask.isBefore(startTime) && endTimeTask.isAfter(startTime)) {
                         return 0;
                     //    break;
-                   }
-                   if (startTimeTask.isBefore(endTime) && endTimeTask.isAfter(endTime)) {
-                       return 0;
+                    }
+                    if (startTimeTask.isBefore(endTime) && endTimeTask.isAfter(endTime)) {
+                        return 0;
                    //    break;
-                   }
+                    }
                }
             }
         }

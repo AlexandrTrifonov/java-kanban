@@ -3,6 +3,7 @@ package tasks;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Objects;
 
 public class Task {
     protected Integer id;
@@ -57,7 +58,7 @@ public class Task {
         this.endTime = getEndTime();
 
     }
-    public Task (String name, String description, int duration, LocalDateTime startTime) {
+/*    public Task (String name, String description, int duration, LocalDateTime startTime) {
         this.name=name;
         this.description=description;
         this.status = Status.NEW;
@@ -65,7 +66,7 @@ public class Task {
         this.duration = duration;
         this.startTime = startTime;
         this.endTime = getEndTime();
-    }
+    }*/
 
     public Task (String name, String description, int duration, String time) {
         this.name=name;
@@ -74,13 +75,15 @@ public class Task {
         this.type = Type.TASK;
         this.duration = duration;
         this.time=time;
-        if (time != "null") {
-            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
-            LocalDateTime startTime = LocalDateTime.parse(time, formatter);
-            this.startTime = startTime;
+        if (Objects.equals(time, "null")) {
+    //    if (time == "null") {
+                this.startTime = null;
         } else {
-            this.endTime = getEndTime();
+                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
+                LocalDateTime startTime = LocalDateTime.parse(time, formatter);
+                this.startTime = startTime;
         }
+        this.endTime = getEndTime();
     }
 
     public LocalDateTime getEndTime() {
@@ -148,7 +151,21 @@ public class Task {
         return  startTime;
     }
 
+    @Override
     public String toString() {
+        String result;
+        result = getId() + "," + Type.TASK + "," + getName() + "," + getStatus() + "," + getDuration() + ",";
+        if (startTime == null) {
+            result = result + "null";
+        } else {
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
+            result = result + getStartTime().format(formatter);
+        }
+        result = result + "," + getDescription() + "\n";
+        return result;
+    }
+
+ /*   public String toString() {
         StringBuilder sb = new StringBuilder();
         sb.append(getId());
         sb.append(",");
@@ -160,12 +177,17 @@ public class Task {
         sb.append(",");
         sb.append(getDuration());
         sb.append(",");
-        sb.append(getTime());
+        if (startTime == null) {
+            sb.append(null);
+        }
+    /*    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
+        sb.append(getStartTime().format(formatter));*/
+    /*    sb.append(getStartTime());
         sb.append(",");
         sb.append(getDescription());
         sb.append("\n");
         return sb.toString();
-    }
+    }*/
 
 
 /*    @Override
@@ -174,14 +196,6 @@ public class Task {
                 "name='" + name + '\'' +
                 '}';
     }*/
-    /*
-    @Override
-    public String toString() {
-        return "Task{" +
-                "name='" + name + '\'' +
-                ", description='" + description + '\'' +
-                ", status='" + status + '\'' +
-                '}';
-    }
-    */
+
+
 }

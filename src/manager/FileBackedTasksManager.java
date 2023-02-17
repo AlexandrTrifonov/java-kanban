@@ -1,5 +1,6 @@
 package manager;
 
+import com.google.gson.Gson;
 import exceptions.ManagerSaveException;
 import interfaces.HistoryManager;
 import interfaces.TaskManager;
@@ -19,6 +20,9 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
 
     public FileBackedTasksManager(String pathFile) {
     this.pathFile = pathFile;
+    }
+
+    public FileBackedTasksManager() {
     }
 
     private String toString(Task task) {
@@ -203,8 +207,11 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
         Task task51 = new Task("Название5","Описание5",50,"2023-03-01 16:00");
         manager.createTask(task51);
 
-        Task task31 = new Task("Название5","Описание5",50,"2023-03-01 12:00");
+    /*    Task task31 = new Task("Название5","Описание5",50,"2023-03-01 12:00");
         manager.createTask(task31);
+
+        Task task21 = new Task("Название555","Описание555",50);
+        manager.createTask(task21);
 
         Epic epic11 = new Epic("Эпик1", "Описание епика1");
         manager.createEpic(epic11);
@@ -216,10 +223,14 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
         manager.createSubtask(subtask20);
 
         Subtask subtask23 = new Subtask("Сабтаск3 эпика", "Описание сабтаска", epic10.getId(),50,"2023-03-03 10:00");
-        manager.createSubtask(subtask23);
+        manager.createSubtask(subtask23);*/
 
         manager.getTaskById(0);
         manager.getTaskById(1);
+
+   /*     Gson gson = new Gson();
+        String jsonString = gson.toJson(manager.getListTasks());
+        System.out.println(jsonString);*/
 
         TaskManager newManager = null;
         try {
