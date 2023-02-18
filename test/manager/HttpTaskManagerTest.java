@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import http.KVServer;
 import http.KVTaskClient;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -15,20 +16,26 @@ import java.io.IOException;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-class HttpTaskManagerTest {
+class HttpTaskManagerTest extends TaskManagerTest<HttpTaskManager> {
 
-    HttpTaskManager manager;
+    protected KVServer kvServer;
 
-    @BeforeAll
-    public static void startServer() throws IOException {
-
-        new KVServer().start();
-    }
 
     @BeforeEach
 
     public void beforeEach() {
+        try {
+            kvServer = new KVServer();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        kvServer.start();
         manager = Managers.getDefault();
+    }
+
+    @AfterEach
+    void serverStop() {
+        kvServer.stop();
     }
 
     @Test
@@ -51,5 +58,10 @@ class HttpTaskManagerTest {
 
     //    assertNotNull(tasks);
         assertEquals(2, tasks.size(), "Размер списка не совпадает");
+    }
+
+    @Override
+    void hello() {
+        System.out.println("Тестирование HttpTaskManagerTest");
     }
 }
